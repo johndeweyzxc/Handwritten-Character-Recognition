@@ -108,7 +108,7 @@ def train_model():
 
 # * RUN THE MODEL AND SHOW THE RESULTS
 trainLoss, testLoss, trainErr, testErr, net = train_model()
-torch.save(net.state_dict(), "HandwrittenCharacterRecognition/char_recog.pth")
+# torch.save(net.state_dict(), "HandwrittenCharacterRecognition/char_recog.pth")
 
 fig, ax = plt.subplots(1, 2, figsize=(16, 5))
 

@@ -13,17 +13,15 @@ def cnn_model(printtoggle=False, output_layers=26):
             # First convolution layer with 1 input channel, 6 output channels, and a 3x3 kernel with padding of 1
             self.conv1 = nn.Conv2d(1, 6, 3, padding=1)
             self.bnorm1 = nn.BatchNorm2d(6)  # Number of channels in this layer
-            # Output size: (28 + 2 * 1 - 3)/1 + 1 = 28/2 = 14 (/2 b/c maxpool)
 
             # Second convolution layer with 6 input channels, 6 output channels, and a 3x3 kernel with padding of 1
             self.conv2 = nn.Conv2d(6, 6, 3, padding=1)
             self.bnorm2 = nn.BatchNorm2d(6)  # Number of channels in this layer
-            # Output size: (28 + 2 * 1 - 3)/1 + 1 = 14/2 = 7 (/2 b/c maxpool)
 
             # * LINEAR DECISION LAYER
-            # Fully connected layer with 776 input features and 50 output features
+            # Fully connected layer with 294 input features and 50 output features
             self.fc1 = nn.Linear(7 * 7 * 6, 50)
-            # Fully connected layer with 50 input features and variable output features
+            # Fully connected layer with 50 input features and 26 output feature results
             self.fc2 = nn.Linear(50, output_layers)
 
         def forward(self, x):
