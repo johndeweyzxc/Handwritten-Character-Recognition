@@ -1,122 +1,135 @@
 # About
 
-Handwritten character recognition from letters "a" to "z" using mnist dataset using the pytorch library. The program uses a Convolutional Neural Network to classify images of handwritten characters.
+- This project utilizes the PyTorch library to implement a **Convolutional Neural Network (CNN)** model for **classifying 28x28 grayscale images of handwritten alphabetic characters (a-z) and numeric digits (0-9).**
+- The dataset is downloaded from MNIST database which contains 124,800 grayscale images of handwritten alphabet characters and 240,000 grayscale images of handwritten digit with the dimension of 28×28 pixels.
+- The CNN model takes a 28x28 grayscale image as input and converts it into 6 feature maps, each with a dimension of 7x7 pixels. These 6 feature maps are then flattened, resulting in 294 (7x7x6) pixels.
+- The 294 flattened feature maps are then used as input to a Neural Network. This Neural Network contains an input layer with 294 input neurons, a hidden layer with 50 neurons, and an output layer with 26 neurons for alphabet character classification or 36 neurons for combined alphabet and digit classification.
 
-## Preparing the dataset
+## Sample Dataset
 
-```python
-cdata = torchvision.datasets.EMNIST(
-    root="emnist", split="letters", download=True)
-char_classes = cdata.classes[1:]
-char_labels = cdata.targets - 1
-```
+### Character
 
-<img src="visuals/classes.png">
+<img src="Sample character dataset.png">
 
-<h4>The code downloads the datasets from emnist database, it also removes the 'N/A' category because it does not belong as a category for digits</h4>
+### Digit
 
-## Data normalization
+<img src="Sample digit dataset.png">
 
-```python
-char_images /= torch.max(char_images)
-```
+## Model
 
-<h4>The data is then normalized to convert values from 0-255 to 0.0-1.0</h4>
+The model takes an input of 28×28 grayscale image and outputs a prediction of the 26 alphabetic character classes or 26 alphabetic character plus 10 digit classes.
+<br>
+<br>
+<img src="CNN model.png">
+<br>
+<br>
 
-### Before normalization
+- **First Convolutional Layer:**
+  - Input: (single-channel grayscale image)
+  - Kernel size: 3×3, padding = 1, stride = 1
+  - Output size (before pooling): 28×28×6
+    <br>
+    <br>
+    - First convolution size $\large\ =\ \frac{Input\ size\ +\ 2\ \times\ Padding\ -\ Kernel\ size}{Stride}\ +\ 1\ =\ \frac{28\ +\ 2\ \times\ 1\ -\ 3}{1}\ +\ 1\ =\ 28$
+      <br>
+      <br>
+    - **Resulting feature map: 28×28×6**
+  - After max pooling (2×2, stride = 2):
+    <br>
+    <br>
+    - First max pooling size $\large\ =\ \frac{Input\ size\ -\ Pool\ size}{Stride}\ +\ 1\ =\ \frac{28\ -\ 2}{2}\ +\ 1\ =\ 14$
+      <br>
+      <br>
+    - **Resulting feature map: 14×14×6**
+- **Second Convolutional Layer:**
+  - Input: 14×14×6
+  - Kernel size: 3×3, padding = 1, stride = 1
+  - Output size (before pooling): 14×14×6
+    <br>
+    <br>
+    - Second convolution size $\large\ =\ \frac{14\ +\ 2\ \times\ 1\ -\ 3}{1}\ +\ 1\ =\ 14$
+      <br>
+      <br>
+    - **Resulting feature map: 14×14×6**
+  - After max pooling (2×2, stride = 2):
+    <br>
+    <br>
+    - Second max pooling size $\large\ =\ \frac{14\ -\ 2}{2}\ +\ 1\ =\ 7$
+      <br>
+      <br>
+    - **Resulting feature map: 7×7×6**
+- **Flattening for Fully Connected Layers:**
+  - 7×7×6 = 294
+    <br>
+    <br>
+  - **294 pixels becomes the input to the Neural Network.**
+- **Neural Network:**
+  - Input Layer:
+    - 294 input neurons connected to hidden layer
+  - Hidden Layer:
+    - 50 input neurons connected to output layer
+  - Output Layer:
+    - 26 output neurons in the case of alphabet classification
+    - 36 output neurons in the case of both alphabet and digit classification
 
-<img src="visuals/before-normalization.png">
+## Evaluation
 
-### After normalization
+- To assess the model's performance, the testing dataset is used, and undersampling is performed to ensure balanced class distribution across alphabet and digit images.
+- The evaluation metrics used include precision, recall, F1-score, and accuracy.
+- A confusion matrix is also used to visualize the predicted labels against the actual labels.
 
-<img src="visuals/after-normalization.png">
+### Accuracy
 
-## Sample dataset
+- The overall accuracy of 85% indicates a good classification performance.
+- The model may struggle to differentiate between classes that closely resemble each other, such as the character 'o' being predicted as the digit '0'.
 
-<img src="visuals/character-datasets.png" />
+                        precision    recall  f1-score   support
 
-## Defining the model
+                    a       0.89      0.88      0.89       422
+                    b       0.97      0.87      0.92       422
+                    c       0.96      0.95      0.95       422
+                    d       0.95      0.89      0.92       422
+                    e       0.94      0.95      0.94       422
+                    f       0.95      0.95      0.95       422
+                    g       0.89      0.64      0.75       422
+                    h       0.95      0.85      0.90       422
+                    i       0.74      0.45      0.56       422
+                    j       0.93      0.91      0.92       422
+                    k       0.95      0.94      0.94       422
+                    l       0.85      0.25      0.39       422
+                    m       0.95      0.99      0.97       422
+                    n       0.88      0.95      0.91       422
+                    o       0.85      0.24      0.37       422
+                    p       0.96      0.97      0.96       422
+                    q       0.91      0.56      0.69       422
+                    r       0.95      0.91      0.93       422
+                    s       0.95      0.71      0.81       422
+                    t       0.93      0.95      0.94       422
+                    u       0.95      0.86      0.90       422
+                    v       0.91      0.93      0.92       422
+                    w       0.96      0.95      0.95       422
+                    x       0.96      0.95      0.95       422
+                    y       0.94      0.82      0.87       422
+                    z       0.99      0.70      0.82       422
+                    0       0.52      0.96      0.67       422
+                    1       0.45      0.96      0.61       422
+                    2       0.74      0.97      0.84       422
+                    3       0.95      0.99      0.97       422
+                    4       0.83      0.95      0.89       422
+                    5       0.77      0.97      0.86       422
+                    6       0.89      0.97      0.93       422
+                    7       0.96      0.98      0.97       422
+                    8       0.87      0.97      0.91       422
+                    9       0.67      0.97      0.79       422
 
-```python
-def __init__(self, printtoggle):
-    super().__init__()
-    self.print = printtoggle
+            accuracy                            0.85     15192
+           macro avg        0.88      0.85      0.85     15192
+        weighted avg        0.88      0.85      0.85     15192
 
-    # * FEATURE MAP LAYERS
-    self.conv1 = nn.Conv2d(1, 6, 3, padding=1)
-    # Normalizes output from conv1 to stabilize training
-    self.bnorm1 = nn.BatchNorm2d(6)
+### Confusion Matrix
 
-    self.conv2 = nn.Conv2d(6, 6, 3, padding=1)
-    # Normalizes output from conv2 to stabilize training
-    self.bnorm2 = nn.BatchNorm2d(6)
-
-    # * LINEAR DECISION LAYER
-    self.fc1 = nn.Linear(7 * 7 * 6, 50)
-    self.fc2 = nn.Linear(50, output_layers)
-```
-
-1. First convolution layer (conv1): 1 input channel, 6 output channels, 3x3 kernel and padding of 1
-2. Second convolution layer (conv2): 6 input channel, 6 output channels, 3x3 kernel and padding of 1
-3. Fully connected layer (fc1): 294 input features and 50 output feature
-4. Fulyy connected layer (fc2): 50 input feature and 26 output feature results
-
-### The 294 input features is calculated as follows:
-
-1. Start with an input of `(1, 28, 28)`
-2. Apply the first convolution and batch normalization to get `(6, 28, 28)`
-3. Apply the first pooling to get `(6, 14, 14)`
-4. Apply the second convolution and batch normalization to get `(6, 14, 14)`
-5. Apply the second pooling to get `(6, 7, 7)`
-
-<h4>The first `7` comes from the height of feature map, the second `7` comes from the width of feature map, and the `6` comes from the number of feature maps (output channels). When flatten this results to feature maps * width * height = 6 * 7 * 7 = 294 features as the input to the first linear layer (fc1).</h4>
-
-## Forward propagation
-
-### First block: Convolution -> Maxpool -> Batchnorm -> Relu
-
-```python
-x = F.max_pool2d(self.conv1(x), 2)
-x = F.leaky_relu(self.bnorm1(x))
-```
-
-### Second block: Convolution -> Maxpool -> Batchnorm -> Relu
-
-```python
-x = F.max_pool2d(self.conv2(x), 2)
-x = F.leaky_relu(self.bnorm2(x))
-```
-
-### Reshape output then proceed to linear layers
-
-```python
-nUnits = x.shape.numel()/x.shape[0]
-x = x.view(-1, int(nUnits))
-```
-
-### Linear layers: Linear layer 1 -> Relu -> Linear layer 2 (output)
-
-```python
-x = F.leaky_relu(self.fc1(x))
-x = self.fc2(x)
-```
-
-## Backward propagation
-
-```python
-loss = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters(), lr=.001)
-```
-
-- Calculate loss function using Cross-entropy
-- `Adam` set as optimizer with learning rate of 0.001
-
-```python
-optimizer.zero_grad()
-loss.backward()
-optimizer.step()
-```
-
-## Test error and training error results
-
-<img src="results/char_recog_loss_graph.png" />
+- The model may struggle to differentiate between classes that closely resemble each other.
+- The character **'o' being predicted as the digit '0'.**
+- The character **'l' being predicted as the digit '1'.**
+- The character **'i' being predicted as the digit '1'.**
+  <img src="Confusion Matrix.png">

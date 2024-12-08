@@ -1,5 +1,3 @@
 __pycache__
-
-results/digit_recog_loss_graph.png
-test_data
-models
+emnist
+CNN model.drawio
